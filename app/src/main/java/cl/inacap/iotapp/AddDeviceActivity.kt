@@ -20,12 +20,23 @@ class AddDeviceActivity : AppCompatActivity() {
         database = Firebase.database.reference.child("Dispositivos")
 
         binding.btnGuardarDispositivo.setOnClickListener {
-            val ipAddress = binding.etIpAddress.text.toString()
-            val nombreSala = binding.etRoomName.text.toString()
+            val ipAddress = binding.etIpAddress.text.toString().trim()
+            val nombreSala = binding.etRoomName.text.toString().trim()
 
             if (ipAddress.isNotEmpty() && nombreSala.isNotEmpty()) {
-                Toast.makeText(this, "ESP32 '$nombreSala' vinculado a Firebase", Toast.LENGTH_SHORT).show()
-                finish()
+                val nuevoDispositivo = mapOf(
+                    "ip" to ipAddress,
+                    "ubicacion" to nombreSala
+                )
+
+                database.push().setValue(nuevoDispositivo)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Dispositivo guardado en Firebase", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Error al guardar en la base de datos", Toast.LENGTH_SHORT).show()
+                    }
             } else {
                 Toast.makeText(this, "Complete todos los campos", Toast.LENGTH_SHORT).show()
             }

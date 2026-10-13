@@ -1,27 +1,54 @@
 package cl.inacap.iotapp
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import cl.inacap.iotapp.databinding.ActivityHistoryBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 class HistoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHistoryBinding
+    private lateinit var database: DatabaseReference
+    private val listaAlertas = mutableListOf<Alerta>()
+    private lateinit var adapter: AlertasAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val alertas = listOf(
-            Alerta("13 Oct 2026 - 14:30", "Temperatura Crítica: 32.1°C", "Sala Servidores"),
-            Alerta("12 Oct 2026 - 09:15", "Apertura de Puerta No Autorizada", "Acceso Principal"),
-            Alerta("10 Oct 2026 - 18:45", "Temperatura Elevada: 30.5°C", "Sala Servidores"),
-            Alerta("08 Oct 2026 - 22:10", "Apertura de Puerta No Autorizada", "Acceso Principal")
-        )
-
-        val adapter = AlertasAdapter(alertas)
+        adapter = AlertasAdapter(listaAlertas)
         binding.rvHistorial.layoutManager = LinearLayoutManager(this)
         binding.rvHistorial.adapter = adapter
+
+        database = Firebase.database.reference.child("Alertas")
+        cargarAlertasDesdeFirebase()
+    }
+
+    private fun cargarAlertasDesdeFirebase() {
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                listaAlertas.clear()
+
+                for (alertaSnapshot in snapshot.children) {
+                    val alerta = alertaSnapshot.getValue(Alerta::class.java)
+                    if (alerta != null) {
+                        listaAlertas.add(alerta)
+                    }
+                }
+
+                adapter.notifyDataSetChanged()
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(baseContext, "Error al cargar historial", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

@@ -2,9 +2,14 @@ package cl.inacap.iotapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import cl.inacap.iotapp.databinding.ActivityMainBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
@@ -19,11 +24,35 @@ class MainActivity : AppCompatActivity() {
 
         database = Firebase.database.reference.child("Sensores")
 
-        // Emulación de datos de sensores para la Evaluación 1 (Octubre 2026)
-        val temperaturaActual = 24.5
-        val puertaAbierta = false
+        leerSensoresDesdeFirebase()
 
-        binding.tvTemperatura.text = "$temperaturaActual °C"
+        binding.btnHistorial.setOnClickListener {
+            startActivity(Intent(this, HistoryActivity::class.java))
+        }
+
+        binding.btnAgregarDispositivo.setOnClickListener {
+            startActivity(Intent(this, AddDeviceActivity::class.java))
+        }
+    }
+
+    private fun leerSensoresDesdeFirebase() {
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                // Leemos los valores que envíe el ESP32 (o los que pongamos a mano para probar)
+                val temp = snapshot.child("temperatura").getValue(Double::class.java) ?: 0.0
+                val puertaAbierta = snapshot.child("puertaAbierta").getValue(Boolean::class.java) ?: false
+
+                actualizarUI(temp, puertaAbierta)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(baseContext, "Error leyendo base de datos", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun actualizarUI(temperatura: Double, puertaAbierta: Boolean) {
+        binding.tvTemperatura.text = "$temperatura °C"
 
         if (puertaAbierta) {
             binding.tvEstadoPuerta.text = "ALERTA: ABIERTA"
@@ -33,16 +62,10 @@ class MainActivity : AppCompatActivity() {
             binding.tvEstadoPuerta.setTextColor(getColor(android.R.color.holo_green_dark))
         }
 
-        if (temperaturaActual > 30.0) {
+        if (temperatura > 30.0) {
             binding.tvTemperatura.setTextColor(getColor(android.R.color.holo_red_dark))
-        }
-
-        binding.btnHistorial.setOnClickListener {
-            startActivity(Intent(this, HistoryActivity::class.java))
-        }
-
-        binding.btnAgregarDispositivo.setOnClickListener {
-            startActivity(Intent(this, AddDeviceActivity::class.java))
+        } else {
+            binding.tvTemperatura.setTextColor(getColor(android.R.color.tab_indicator_text)) // Color normal
         }
     }
 }

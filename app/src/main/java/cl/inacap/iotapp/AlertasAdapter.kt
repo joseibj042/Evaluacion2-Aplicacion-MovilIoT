@@ -6,7 +6,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-data class Alerta(val fecha: String, val descripcion: String, val ubicacion: String)
+data class Alerta(
+    val fecha: String = "",
+    val descripcion: String = "",
+    val ubicacion: String = ""
+)
 
 class AlertasAdapter(private val alertas: List<Alerta>) : RecyclerView.Adapter<AlertasAdapter.AlertaViewHolder>() {
 

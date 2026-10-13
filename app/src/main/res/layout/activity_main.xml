@@ -1,59 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:background="@drawable/bg_tecnologico">
 
+    <!-- Cabecera -->
     <TextView
+        android:id="@+id/tvHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Dashboard"
-        android:textSize="22sp"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="24dp"
+        android:text="Estado en Tiempo Real"
+        android:textColor="#FFFFFF"
+        android:textSize="26sp"
         android:textStyle="bold"
-        android:layout_marginBottom="24dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Temperatura Actual:"
-        android:textSize="18sp"/>
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardTemp"
+        android:layout_width="0dp"
+        android:layout_height="160dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="32dp"
+        app:cardBackgroundColor="#1E293B"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/cardPuerta"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvHeader">
 
-    <TextView
-        android:id="@+id/tvTemperatura"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="-- °C"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="24dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Estado de la Puerta:"
-        android:textSize="18sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Térmico"
+                android:textColor="#94A3B8"
+                android:textSize="14sp" />
 
-    <TextView
-        android:id="@+id/tvEstadoPuerta"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Desconocido"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="#FF0000"
-        android:layout_marginBottom="32dp"/>
+            <TextView
+                android:id="@+id/tvTemperatura"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="-- °C"
+                android:textColor="#FFFFFF"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
-    <Button
+    <!-- Widget Puerta -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardPuerta"
+        android:layout_width="0dp"
+        android:layout_height="160dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="32dp"
+        app:cardBackgroundColor="#1E293B"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/cardTemp"
+        app:layout_constraintTop_toBottomOf="@id/tvHeader">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Acceso"
+                android:textColor="#94A3B8"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvEstadoPuerta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="CERRADA"
+                android:textColor="#4ADE80"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Botones de Acción -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnHistorial"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Ver Historial de Alertas"
-        android:layout_marginBottom="16dp"/>
+        android:layout_height="64dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="48dp"
+        android:backgroundTint="#334155"
+        android:text="VER HISTORIAL DE ALERTAS"
+        app:icon="@android:drawable/ic_menu_recent_history"
+        app:cornerRadius="16dp"
+        app:layout_constraintTop_toBottomOf="@id/cardTemp" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAgregarDispositivo"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Agregar Nuevo Dispositivo"/>
-</LinearLayout>
+        android:layout_height="64dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:text="VINCULAR NUEVO NODO (ESP32)"
+        android:textColor="#38BDF8"
+        app:strokeColor="#38BDF8"
+        app:strokeWidth="2dp"
+        app:icon="@android:drawable/ic_menu_add"
+        app:iconTint="#38BDF8"
+        app:cornerRadius="16dp"
+        app:layout_constraintTop_toBottomOf="@id/btnHistorial" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
